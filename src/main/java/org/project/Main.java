@@ -1,17 +1,28 @@
 package org.project;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 //TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
 // click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
 public class Main {
   public static void main(String[] args) {
-    //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-    // to see how IntelliJ IDEA suggests fixing it.
-    System.out.printf("Hello and welcome!");
+//    List<String[]> csvData = Arrays.asList(
+//        new String[]{"POST", "UserService", "/api/products", "10"},
+//        new String[]{"POST", "UserService", "/api/users", "50"},
+//        new String[]{"GET", "ProductService", "/api/products", "75"},
+//    new String[]{"GET", "ProductService", "/api/products", "105"}
+//    );
     
-    for (int i = 1; i <= 5; i++) {
-      //TIP Press <shortcut actionId="Debug"/> to start debugging your code. We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/> breakpoint
-      // for you, but you can always add more by pressing <shortcut actionId="ToggleLineBreakpoint"/>.
-      System.out.println("i = " + i);
-    }
+    // Парсинг в Map
+    File file = new File("./prod1.csv");
+    Map<String, RequestData> resultMap = CsvParser.parseCsvToMap(file);
+    
+    // Вывод результатов
+    resultMap.forEach((path, data) -> {
+      System.out.println("Path: " + path + " -> " + data);
+    });
   }
 }
