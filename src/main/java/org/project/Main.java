@@ -1,6 +1,9 @@
 package org.project;
 
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -21,8 +24,15 @@ public class Main {
     Map<String, RequestData> resultMap = CsvParser.parseCsvToMap(file);
     
     // Вывод результатов
-    resultMap.forEach((path, data) -> {
-      System.out.println("Path: " + path + " -> " + data);
-    });
+    try (PrintWriter writer = new PrintWriter(new FileWriter("./output.txt"))) {
+      resultMap.forEach((path, data) -> {
+        if (data.getCount() > 10) {
+          writer.println("Path: " + path + " -> " + data);
+        }
+      });
+      System.out.println("Результаты записаны в output.txt");
+    } catch (IOException e) {
+      System.err.println("Ошибка записи в файл: " + e.getMessage());
+    }
   }
 }
