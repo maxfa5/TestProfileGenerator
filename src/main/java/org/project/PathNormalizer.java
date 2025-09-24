@@ -21,7 +21,7 @@ public class PathNormalizer {
           "/..."
       ),
       new ReplacementRule(
-          Pattern.compile("/fold-[a-zA-Z0-9]{3,}/"),
+          Pattern.compile("/fold-[a-zA-Z0-9]{3,}"),
           "/..."
       ),
       new ReplacementRule(

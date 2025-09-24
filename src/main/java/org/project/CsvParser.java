@@ -13,7 +13,6 @@ public class CsvParser {
     data.setServiceName(row[0]);
     
     data.setPath(PathNormalizer.normalizePathWithDots(row[2]));
-    System.out.println(data.getPath());
     try {
       data.setCount(Long.parseLong(row[3]));
     } catch (NumberFormatException e) {
