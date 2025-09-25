@@ -1,7 +1,6 @@
-package org.project;
+package org.project.Writer;
 
-import org.project.PlaneRequest;
-import org.project.ProfileWriter;
+import org.project.model.PlaneRequest;
 
 import java.io.FileWriter;
 import java.io.PrintWriter;

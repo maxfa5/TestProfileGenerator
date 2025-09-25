@@ -2,9 +2,9 @@ package org.project;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TreeMap;
 
-import org.project.RequestData;
+import org.project.model.PlaneRequest;
+import org.project.model.RequestData;
 
 public class TestProfileGenerator {
   private static long MIN_COUNT_REQUEST = 10;
@@ -14,7 +14,7 @@ public class TestProfileGenerator {
   private static double INTENSIVITY_MIN = 0.5;
   private static double ROUND_MULTIPLIER = 1000; //3 знака после .
   public static Map<String, PlaneRequest>  generateTestProfile(Map<String, RequestData>dataMap) {
-    Map<String, PlaneRequest>resultMap = new TreeMap<String, PlaneRequest>();
+    Map<String, PlaneRequest>resultMap = new HashMap<>();
     for (Map.Entry<String, RequestData> entry : dataMap.entrySet()) {
       long count = entry.getValue().getCount();
       if (count >MIN_COUNT_REQUEST ){

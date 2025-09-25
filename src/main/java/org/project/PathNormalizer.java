@@ -7,55 +7,101 @@ import java.util.regex.Pattern;
 public class PathNormalizer {
   
   private static final List<ReplacementRule> RULES = Arrays.asList(
-      // Новые правила для project и service account
+      // /projects/proj-abc123/ => /projects/.../
+      new ReplacementRule(
+          Pattern.compile("(/projects/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
+          "$1..."
+      ),
+      
+      // /proj-abc123 => /...
+      new ReplacementRule(
+          Pattern.compile("(/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
+          "$1..."
+      ),
+      
+      // /fold-abc123/ => /.../
+      new ReplacementRule(
+          Pattern.compile("(/)fold-[a-zA-Z0-9]{3,}(?=/|$)"),
+          "$1..."
+      ),
+      
+      // /grp-1213/asdf => /.../asdf
+      new ReplacementRule(
+          Pattern.compile("(/)grp-[a-zA-Z0-9]{3,}(?=/|$)"),
+          "$1..."
+      ),
+      
+      // /sa_proj-abc123-def => /...
+      new ReplacementRule(
+          Pattern.compile("(/)sa_proj-[a-zA-Z0-9]{3,}-[a-zA-Z0-9]+(?=/|$)"),
+          "$1..."
+      ),
+      
+      // /personal/username/ => /personal/.../
+      new ReplacementRule(
+          Pattern.compile("(/personal/)[a-zA-Z]{3,}(?=/|$)"),
+          "$1..."
+      ),
+      
+      // URL-encoded paths
+      new ReplacementRule(
+          Pattern.compile("(/resource-manager%2F[^%]+%2F)[a-zA-Z0-9]+-[a-zA-Z0-9]+"),
+          "$1..."
+      ),
+      
+      // Сегменты с 4+ цифрами: /4j5n6jjho3k8 => /...
+      new ReplacementRule(
+          Pattern.compile("(/)([^/]*(\\d[^/]*){4,}[^/]*)(?=/|$)"),
+          "$1..."
+      ),
+      
+      // /vtb12345 => /...
+      new ReplacementRule(
+          Pattern.compile("(/)vtb\\d{4,}(?=/|$)"),
+          "$1..."
+      ),
+      
+      // Числовые ID: /12345 => /...
+      new ReplacementRule(
+          Pattern.compile("(/)\\d+(?=/|$)"),
+          "$1..."
+      ),
+      
+      // Версии: /v1 => / (убираем полностью)
+      new ReplacementRule(
+          Pattern.compile("/v\\d+"),
+          ""
+      ),
+      
+      // Контекстные замены: /12345/edit => /.../edit
+      new ReplacementRule(
+          Pattern.compile("(/)\\d+(/edit)"),
+          "$1...$2"
+      ),
+      new ReplacementRule(
+          Pattern.compile("(/)\\d+(/delete)"),
+          "$1...$2"
+      ),
+      new ReplacementRule(
+          Pattern.compile("(/)\\d+(/update)"),
+          "$1...$2"
+      ),
+      
+      // Конкретные пути: /users/12345 => /users/...
+      new ReplacementRule(
+          Pattern.compile("(/users/)\\d+"),
+          "$1..."
+      ),
+      new ReplacementRule(
+          Pattern.compile("(/products/)\\d+"),
+          "$1..."
+      )
+      
+      // Универсальное правило для любых ID в конце строки
 //      new ReplacementRule(
-//          Pattern.compile("projects/proj-[a-zA-Z0-9]/service_accounts/sa_proj-[a-zA-Z0-9]-[a-zA-Z0-9]+"),
-//          "projects/../service_accounts/.."
-//      ),
-      new ReplacementRule(
-          Pattern.compile("/projects/proj-[a-zA-Z0-9]{3,}"),
-          "/projects/..."
-      ),
-      new ReplacementRule(
-          Pattern.compile("/proj-[a-zA-Z0-9]"),
-          "/..."
-      ),
-      new ReplacementRule(
-          Pattern.compile("/fold-[a-zA-Z0-9]{3,}"),
-          "/..."
-      ),
-      new ReplacementRule(
-          Pattern.compile("/grp-[a-zA-Z0-9]{3,}/"),
-          "/..."
-      ),
-      new ReplacementRule(
-          Pattern.compile("/sa_proj-[a-zA-Z0-9]{3,}-[a-zA-Z0-9]+"),
-          "/..."
-      ),
-      new ReplacementRule(
-          Pattern.compile("/personal/[a-zA-Z]{3,}/"),
-          "/personal/..."
-      ),
-// Еще более универсальная - для любого пути после resource-manager
-      new ReplacementRule(
-          Pattern.compile("/resource-manager%2F[^%]+%2[a-zA-Z0-9]+-[a-zA-Z0-9]+"),
-          "/resource-manager..."
-      ),
-      new ReplacementRule(
-          Pattern.compile("(^|[^/])/([^/]*(\\d[^/]*){4,}([^/]*|$))"),  // 4+ цифр, но не после //
-          "$1/..."
-      ),
-      new ReplacementRule(
-          Pattern.compile("/vtb\\d{4,}"),  // 4 или более цифр
-          "/..."
-      ),
-      new ReplacementRule(Pattern.compile("/\\d+"), "/..."),
-      new ReplacementRule(Pattern.compile("/v\\d+"), ""),
-      new ReplacementRule(Pattern.compile("/\\d+/edit"), "/.../edit"),
-      new ReplacementRule(Pattern.compile("/\\d+/delete"), "/.../delete"),
-      new ReplacementRule(Pattern.compile("/\\d+/update"), "/.../update"),
-      new ReplacementRule(Pattern.compile("/users/\\d+"), "/users/..."),
-      new ReplacementRule(Pattern.compile("/products/\\d+"), "/products/...")
+//          Pattern.compile("(/)[^/]+$"),
+//          "$1..."
+//      )
   );
   
   public static String normalizePathWithDots(String path) {
@@ -66,10 +112,38 @@ public class PathNormalizer {
     String normalized = path;
     for (ReplacementRule rule : RULES) {
       normalized = rule.pattern.matcher(normalized).replaceAll(rule.replacement);
-      
     }
     
     return normalized;
+  }
+  
+  private static String normalizeSingleSegment(String segment) {
+    // Project IDs
+    if (segment.matches("proj-[a-zA-Z0-9]{3,}")) return "...";
+    
+    // Fold IDs
+    if (segment.matches("fold-[a-zA-Z0-9]{3,}")) return "...";
+    
+    // Group IDs
+    if (segment.matches("grp-[a-zA-Z0-9]{3,}")) return "...";
+    
+    // Service Account IDs
+    if (segment.matches("sa_proj-[a-zA-Z0-9]{3,}-[a-zA-Z0-9]+")) return "...";
+    
+    // VTB с цифрами
+    if (segment.matches("vtb\\d{4,}")) return "...";
+    
+    // Сегменты с 4+ цифрами
+    if (segment.chars().filter(Character::isDigit).count() >= 4) return "...";
+    
+    // Длинные числовые ID
+    if (segment.matches("\\d{3,}")) return "...";
+    
+    // Personal names
+    if (segment.matches("[a-zA-Z]{3,}") && !segment.equals("personal"))
+      return "...";
+    
+    return segment;
   }
   
   private static class ReplacementRule {
@@ -81,5 +155,4 @@ public class PathNormalizer {
       this.replacement = replacement;
     }
   }
-  
 }

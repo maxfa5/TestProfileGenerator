@@ -1,4 +1,4 @@
-package org.project;
+package org.project.model;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

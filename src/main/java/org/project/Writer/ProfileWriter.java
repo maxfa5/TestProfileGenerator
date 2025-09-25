@@ -1,6 +1,6 @@
-package org.project;
+package org.project.Writer;
 
-import org.project.PlaneRequest;
+import org.project.model.PlaneRequest;
 import java.util.Map;
 
 public interface ProfileWriter {

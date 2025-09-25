@@ -1,4 +1,4 @@
-package org.project;
+package org.project.Writer;
 
 import java.util.HashMap;
 import java.util.Map;
