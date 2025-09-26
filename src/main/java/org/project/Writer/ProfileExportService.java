@@ -1,7 +1,5 @@
-package org.project;
+package org.project.Writer;
 
-import org.project.Writer.ProfileWriter;
-import org.project.Writer.ProfileWriterFactory;
 import org.project.model.PlaneRequest;
 
 import java.util.Map;

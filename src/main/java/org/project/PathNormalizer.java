@@ -45,13 +45,13 @@ public class PathNormalizer {
       
       // URL-encoded paths
       new ReplacementRule(
-          Pattern.compile("(/resource-manager%2F[^%]+%2F)[a-zA-Z0-9]+-[a-zA-Z0-9]+"),
+          Pattern.compile("(/resource-manager)%2Fprojects%2Fproj-[a-zA-Z0-9]{3,}+(?=/|$)"),
           "$1..."
       ),
       
       // Сегменты с 4+ цифрами: /4j5n6jjho3k8 => /...
       new ReplacementRule(
-          Pattern.compile("(/)([^/]*(\\d[^/]*){4,}[^/]*)(?=/|$)"),
+          Pattern.compile("(/)([^/]*(\\d[^/]*){5,}[^/]*)(?=/|$)"),
           "$1..."
       ),
       
@@ -67,26 +67,26 @@ public class PathNormalizer {
           "$1..."
       ),
       
-      // Версии: /v1 => / (убираем полностью)
-      new ReplacementRule(
-          Pattern.compile("/v\\d+"),
-          ""
-      ),
+//      // Версии: /v1 => / (убираем полностью)
+//      new ReplacementRule(
+//          Pattern.compile("/v\\d+"),
+//          ""
+//      ),
       
-      // Контекстные замены: /12345/edit => /.../edit
-      new ReplacementRule(
-          Pattern.compile("(/)\\d+(/edit)"),
-          "$1...$2"
-      ),
-      new ReplacementRule(
-          Pattern.compile("(/)\\d+(/delete)"),
-          "$1...$2"
-      ),
-      new ReplacementRule(
-          Pattern.compile("(/)\\d+(/update)"),
-          "$1...$2"
-      ),
-      
+//      // Контекстные замены: /12345/edit => /.../edit
+//      new ReplacementRule(
+//          Pattern.compile("(/)\\d+(/edit)"),
+//          "$1...$2"
+//      ),
+//      new ReplacementRule(
+//          Pattern.compile("(/)\\d+(/delete)"),
+//          "$1...$2"
+//      ),
+//      new ReplacementRule(
+//          Pattern.compile("(/)\\d+(/update)"),
+//          "$1...$2"
+//      ),
+//
       // Конкретные пути: /users/12345 => /users/...
       new ReplacementRule(
           Pattern.compile("(/users/)\\d+"),
@@ -96,12 +96,6 @@ public class PathNormalizer {
           Pattern.compile("(/products/)\\d+"),
           "$1..."
       )
-      
-      // Универсальное правило для любых ID в конце строки
-//      new ReplacementRule(
-//          Pattern.compile("(/)[^/]+$"),
-//          "$1..."
-//      )
   );
   
   public static String normalizePathWithDots(String path) {

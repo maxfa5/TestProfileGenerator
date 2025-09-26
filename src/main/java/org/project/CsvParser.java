@@ -9,7 +9,7 @@ import java.util.*;
 
 public class CsvParser {
   
-  private static RequestData parseRow(String[] row) {
+  private static RequestData parseRowToRequestData(String[] row) {
     RequestData data = new RequestData();
     data.setRequestType(row[1]);
     data.setServiceName(row[0]);
@@ -32,15 +32,16 @@ public class CsvParser {
       
       while ((values = csvReader.readNext()) != null) {
         if (values.length >= 4) {
-          RequestData requestData = parseRow(values);
+          RequestData requestData = parseRowToRequestData(values);
           String compositeKey = requestData.getCompositeKey();
           
           if (compositeKey != null && !compositeKey.isEmpty()) {
-            // Если комбинированный ключ уже существует, суммируем count
+            
+            // Если ключ уже существует, суммируем count
             if (resultMap.containsKey(compositeKey)) {
               RequestData existing = resultMap.get(compositeKey);
               existing.setCount(existing.getCount() + requestData.getCount());
-              existing.setServiceName(requestData.getServiceName());
+//              existing.setServiceName(requestData.getServiceName());
             } else {
               resultMap.put(compositeKey, requestData);
             }
@@ -59,7 +60,7 @@ public class CsvParser {
     
     for (String[] row : csvData) {
       if (row.length >= 4) {
-        RequestData requestData = parseRow(row);
+        RequestData requestData = parseRowToRequestData(row);
         String compositeKey = requestData.getCompositeKey();
         
         if (compositeKey != null && !compositeKey.isEmpty()) {

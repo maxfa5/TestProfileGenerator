@@ -23,7 +23,7 @@ public class TestProfileGenerator {
         planeRequest.setPath(entry.getValue().getPath());
         planeRequest.setCount(count);
         planeRequest.setServiceName(entry.getValue().getServiceName());
-        planeRequest.setIntensivity(intensivity_generator(planeRequest));
+        planeRequest.setIntensivity(intensivity_calc(planeRequest));
         if (planeRequest.getIntensivity() < INTENSIVITY_MIN){
           continue;
         }
@@ -32,7 +32,7 @@ public class TestProfileGenerator {
     }
     return resultMap;
   }
-  private static double intensivity_generator(PlaneRequest planeRequest) {
+  private static double intensivity_calc(PlaneRequest planeRequest) {
     return roundTo(planeRequest.getCount()/STATISTIC_BY_DAYS/WORK_HOURS * INTENSIVITY_MULTIPLIER);
   }
   

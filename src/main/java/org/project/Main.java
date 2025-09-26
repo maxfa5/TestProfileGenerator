@@ -1,5 +1,6 @@
 package org.project;
 
+import org.project.Writer.ProfileExportService;
 import org.project.model.PlaneRequest;
 import org.project.model.RequestData;
 
@@ -8,11 +9,12 @@ import java.util.Map;
 
 public class Main {
   public static void main(String[] args) {
+    ProfileExportService exportService = new ProfileExportService();
+
     try {
-      File file = new File("./prod4.csv");
+      File file = new File("./prod7.csv");
       Map<String, RequestData> dataMap = CsvParser.parseCsvToMap(file);
       Map<String, PlaneRequest> testProfile = TestProfileGenerator.generateTestProfile(dataMap);
-      ProfileExportService exportService = new ProfileExportService();
       exportService.exportToFormats(testProfile, "./test_profile");
       
     } catch (Exception e) {
