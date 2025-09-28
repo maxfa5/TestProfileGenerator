@@ -10,31 +10,39 @@ public class PathNormalizer {
       // /projects/proj-abc123/ => /projects/.../
       new ReplacementRule(
           Pattern.compile("(/projects/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "$1..."
+          "$1{project_id}"
       ),
       
       // /proj-abc123 => /...
       new ReplacementRule(
           Pattern.compile("(/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "$1..."
+          "$1{project_id}"
       ),
       
       // /fold-abc123/ => /.../
       new ReplacementRule(
           Pattern.compile("(/)fold-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "$1..."
+          "$1{folder_id}"
       ),
       
       // /grp-1213/asdf => /.../asdf
       new ReplacementRule(
           Pattern.compile("(/)grp-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "$1..."
+          "$1{group_id}"
       ),
       
       // /sa_proj-abc123-def => /...
       new ReplacementRule(
           Pattern.compile("(/)sa_proj-[a-zA-Z0-9]{3,}-[a-zA-Z0-9]+(?=/|$)"),
-          "$1..."
+          "$1{project_id}"
+      ),
+      new ReplacementRule(
+          Pattern.compile("(/items/)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=/|$)"),
+          "$1{item_id}"
+      ),
+      new ReplacementRule(
+          Pattern.compile("(/orders/)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=/|$)"),
+          "$1{order_id}"
       ),
       
       // /personal/username/ => /personal/.../
@@ -61,12 +69,12 @@ public class PathNormalizer {
           "$1..."
       ),
       
-      // Числовые ID: /12345 => /...
-      new ReplacementRule(
-          Pattern.compile("(/)\\d+(?=/|$)"),
-          "$1..."
-      ),
-      
+//      // Числовые ID: /12345 => /...
+//      new ReplacementRule(
+//          Pattern.compile("(/)\\d+(?=/|$)"),
+//          "$1..."
+//      ),
+//
 //      // Версии: /v1 => / (убираем полностью)
 //      new ReplacementRule(
 //          Pattern.compile("/v\\d+"),
@@ -94,7 +102,7 @@ public class PathNormalizer {
       ),
       new ReplacementRule(
           Pattern.compile("(/products/)\\d+"),
-          "$1..."
+          "$1{product_id}"
       )
   );
   

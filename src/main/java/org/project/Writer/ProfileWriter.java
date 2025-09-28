@@ -1,8 +1,7 @@
 package org.project.Writer;
 
-import org.project.model.PlaneRequest;
-import java.util.Map;
+import org.project.model.LoadProfile;
 
 public interface ProfileWriter {
-  void write(Map<String, PlaneRequest> profile, String filename);
+  void write(LoadProfile loadProfile, String filename);
 }

@@ -1,5 +1,6 @@
 package org.project.Writer;
 
+import org.project.model.LoadProfile;
 import org.project.model.PlaneRequest;
 import java.io.FileWriter;
 import java.io.PrintWriter;
@@ -8,10 +9,10 @@ import java.util.Map;
 public class CsvProfileWriter implements ProfileWriter {
   
   @Override
-  public void write(Map<String, PlaneRequest> profile, String filename) {
+  public void write(LoadProfile loadProfile, String filename) {
     try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
       writeHeader(writer);
-      writeBody(writer, profile);
+      writeBody(writer, loadProfile.getRequests());
       System.out.println("CSV профиль записан в файл: " + filename);
     } catch (Exception e) {
       System.err.println("Ошибка записи CSV профиля: " + e.getMessage());

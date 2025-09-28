@@ -1,5 +1,6 @@
 package org.project.Writer;
 
+import org.project.model.LoadProfile;
 import org.project.model.PlaneRequest;
 
 import java.io.FileWriter;
@@ -9,10 +10,10 @@ import java.util.Map;
 public class TextProfileWriter implements ProfileWriter {
   
   @Override
-  public void write(Map<String, PlaneRequest> profile, String filename) {
+  public void write(LoadProfile loadProfile, String filename) {
     try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
-      writeHeader(writer, profile.size());
-      writeBody(writer, profile);
+      writeHeader(writer, loadProfile.getRequests().size());
+      writeBody(writer, loadProfile.getRequests());
       System.out.println("Текстовый профиль записан в файл: " + filename);
     } catch (Exception e) {
       System.err.println("Ошибка записи текстового профиля: " + e.getMessage());
