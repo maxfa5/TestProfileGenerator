@@ -1,20 +1,25 @@
-package org.project;
+package org.project.service;
 
 import com.opencsv.CSVReader;
 import org.project.model.RequestData;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import java.io.FileReader;
 import java.io.File;
 import java.util.*;
 
-public class CsvParser {
+@Service
+public class CsvParserService {
+  @Autowired
+  private PathNormalizerService pathNormalizerService;
   
   private static RequestData parseRowToRequestData(String[] row) {
     RequestData data = new RequestData();
     data.setRequestType(row[1]);
     data.setServiceName(row[0]);
     
-    data.setPath(PathNormalizer.normalizePathWithDots(row[2]));
+    data.setPath(pathNormalizerService.normalizePathWithDots(row[2]));
     try {
       data.setCount(Long.parseLong(row[3]));
     } catch (NumberFormatException e) {

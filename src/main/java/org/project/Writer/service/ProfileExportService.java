@@ -2,9 +2,10 @@ package org.project.Writer;
 
 import org.project.model.LoadProfile;
 import org.project.model.PlaneRequest;
+import org.springframework.stereotype.Service;
 
 import java.util.Map;
-
+@Service
 public class ProfileExportService {
   
   public void exportToFormats(LoadProfile loadProfile, String baseFilename) {

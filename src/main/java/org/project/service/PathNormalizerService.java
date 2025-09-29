@@ -1,21 +1,17 @@
-package org.project;
+package org.project.service;
+
+import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
-
-public class PathNormalizer {
+@Service
+public class PathNormalizerService {
   
   private static final List<ReplacementRule> RULES = Arrays.asList(
       // /projects/proj-abc123/ => /projects/.../
       new ReplacementRule(
           Pattern.compile("(/projects/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "$1{project_id}"
-      ),
-      
-      // /proj-abc123 => /...
-      new ReplacementRule(
-          Pattern.compile("(/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
           "$1{project_id}"
       ),
       
@@ -69,11 +65,11 @@ public class PathNormalizer {
           "$1..."
       ),
       
-//      // Числовые ID: /12345 => /...
-//      new ReplacementRule(
-//          Pattern.compile("(/)\\d+(?=/|$)"),
-//          "$1..."
-//      ),
+      // Числовые ID: /12345 => /...
+      new ReplacementRule(
+          Pattern.compile("(/)\\d+(?=/|$)"),
+          "$1..."
+      ),
 //
 //      // Версии: /v1 => / (убираем полностью)
 //      new ReplacementRule(
