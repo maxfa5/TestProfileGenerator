@@ -14,4 +14,6 @@ import lombok.Setter;
 public class LoadProfile {
   Map<String, PlaneRequest> Requests;
   double intensivityByHour;
+  long CountAllRequests;
+  double planCoveragePercentage;
 }

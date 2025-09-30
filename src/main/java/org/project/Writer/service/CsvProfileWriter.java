@@ -1,5 +1,6 @@
-package org.project.Writer;
+package org.project.Writer.service;
 
+import org.project.Writer.ProfileWriter;
 import org.project.model.LoadProfile;
 import org.project.model.PlaneRequest;
 import java.io.FileWriter;
@@ -13,6 +14,7 @@ public class CsvProfileWriter implements ProfileWriter {
     try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
       writeHeader(writer);
       writeBody(writer, loadProfile.getRequests());
+      writeFooter(writer, loadProfile);
       System.out.println("CSV профиль записан в файл: " + filename);
     } catch (Exception e) {
       System.err.println("Ошибка записи CSV профиля: " + e.getMessage());
@@ -35,5 +37,15 @@ public class CsvProfileWriter implements ProfileWriter {
               req.getCount(),
               req.getIntensivity());
         });
+  }
+  
+  private void writeFooter(PrintWriter writer, LoadProfile loadProfile) {
+    writer.println();
+    writer.println("Total Requests," + loadProfile.getCountAllRequests());
+    writer.println("Total Intensity," + String.format("%.3f", loadProfile.getIntensivityByHour()));
+    
+    if (loadProfile.getPlanCoveragePercentage() > 0) {
+      writer.println("Plan Coverage," + String.format("%.2f%%", loadProfile.getPlanCoveragePercentage()));
+    }
   }
 }

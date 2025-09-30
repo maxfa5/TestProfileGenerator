@@ -11,10 +11,15 @@ import java.util.*;
 
 @Service
 public class CsvParserService {
-  @Autowired
-  private PathNormalizerService pathNormalizerService;
   
-  private static RequestData parseRowToRequestData(String[] row) {
+  private final PathNormalizerService pathNormalizerService;
+  
+  @Autowired
+  public CsvParserService(PathNormalizerService pathNormalizerService) {
+    this.pathNormalizerService = pathNormalizerService;
+  }
+  
+  private RequestData parseRowToRequestData(String[] row) {
     RequestData data = new RequestData();
     data.setRequestType(row[1]);
     data.setServiceName(row[0]);
@@ -29,7 +34,7 @@ public class CsvParserService {
     return data;
   }
   
-  public static Map<String, RequestData> parseCsvToMap(File file) {
+  public Map<String, RequestData> parseCsvToMap(File file) {
     Map<String, RequestData> resultMap = new HashMap<>();
     
     try (CSVReader csvReader = new CSVReader(new FileReader(file))) {
@@ -46,7 +51,6 @@ public class CsvParserService {
             if (resultMap.containsKey(compositeKey)) {
               RequestData existing = resultMap.get(compositeKey);
               existing.setCount(existing.getCount() + requestData.getCount());
-//              existing.setServiceName(requestData.getServiceName());
             } else {
               resultMap.put(compositeKey, requestData);
             }
@@ -60,7 +64,7 @@ public class CsvParserService {
     return resultMap;
   }
   
-  public static Map<String, RequestData> parseToMapWithMerge(List<String[]> csvData) {
+  public Map<String, RequestData> parseToMapWithMerge(List<String[]> csvData) {
     Map<String, RequestData> resultMap = new HashMap<>();
     
     for (String[] row : csvData) {
@@ -84,8 +88,8 @@ public class CsvParserService {
   }
   
   // Метод для получения данных по отдельным компонентам ключа
-  public static RequestData getByCompositeKey(Map<String, RequestData> map,
-                                              String requestType, String path) {
+  public RequestData getByCompositeKey(Map<String, RequestData> map,
+                                       String requestType, String path) {
     String compositeKey = requestType + ":" + path;
     return map.get(compositeKey);
   }

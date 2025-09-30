@@ -1,10 +1,10 @@
-package org.project.Writer;
+package org.project.Writer.service;
 
+import org.project.Writer.ProfileWriter;
+import org.project.Writer.ProfileWriterFactory;
 import org.project.model.LoadProfile;
-import org.project.model.PlaneRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.Map;
 @Service
 public class ProfileExportService {
   

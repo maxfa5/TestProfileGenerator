@@ -1,5 +1,8 @@
 package org.project.Writer;
 
+import org.project.Writer.service.CsvProfileWriter;
+import org.project.Writer.service.TextProfileWriter;
+
 import java.util.HashMap;
 import java.util.Map;
 

@@ -8,17 +8,17 @@ import java.util.regex.Pattern;
 @Service
 public class PathNormalizerService {
   
-  private static final List<ReplacementRule> RULES = Arrays.asList(
+  private  final List<ReplacementRule> RULES = Arrays.asList(
       // /projects/proj-abc123/ => /projects/.../
       new ReplacementRule(
           Pattern.compile("(/projects/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "$1{project_id}"
+          "/{context_type}/{context_id}"
       ),
       
       // /fold-abc123/ => /.../
       new ReplacementRule(
           Pattern.compile("(/)fold-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "$1{folder_id}"
+          "/{context_type}/{context_id}"
       ),
       
       // /grp-1213/asdf => /.../asdf
@@ -30,7 +30,11 @@ public class PathNormalizerService {
       // /sa_proj-abc123-def => /...
       new ReplacementRule(
           Pattern.compile("(/)sa_proj-[a-zA-Z0-9]{3,}-[a-zA-Z0-9]+(?=/|$)"),
-          "$1{project_id}"
+          "/{context_type}/{context_id}"
+      ),
+      new ReplacementRule(
+          Pattern.compile("/organizations/"),
+          "/{context_type}/"
       ),
       new ReplacementRule(
           Pattern.compile("(/items/)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=/|$)"),
@@ -102,7 +106,7 @@ public class PathNormalizerService {
       )
   );
   
-  public static String normalizePathWithDots(String path) {
+  public  String normalizePathWithDots(String path) {
     if (path == null || path.isEmpty()) {
       return path;
     }
@@ -115,7 +119,7 @@ public class PathNormalizerService {
     return normalized;
   }
   
-  private static String normalizeSingleSegment(String segment) {
+  private String normalizeSingleSegment(String segment) {
     // Project IDs
     if (segment.matches("proj-[a-zA-Z0-9]{3,}")) return "...";
     
