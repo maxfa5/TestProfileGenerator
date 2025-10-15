@@ -15,6 +15,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import java.io.File;
 import java.util.Map;
 
+import static java.lang.System.exit;
+
 @SpringBootApplication
 public class Main implements ApplicationRunner {
   
@@ -43,7 +45,7 @@ public class Main implements ApplicationRunner {
       exportService.exportToFormats(loadProfile, "./test_profile");
       
       System.out.println("Профиль нагрузки успешно сгенерирован и экспортирован!");
-      
+      exit(0);
     } catch (Exception e) {
       System.err.println("Ошибка: " + e.getMessage());
       e.printStackTrace();

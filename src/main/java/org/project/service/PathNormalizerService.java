@@ -9,18 +9,36 @@ import java.util.regex.Pattern;
 public class PathNormalizerService {
   
   private  final List<ReplacementRule> RULES = Arrays.asList(
+      new ReplacementRule(
+          Pattern.compile("^[a-z]+://[^:]+:\\d+"),
+          ""
+      ),
       // /projects/proj-abc123/ => /projects/.../
+      
+//      new ReplacementRule(
+//          Pattern.compile("(projects/)legacy-[a-zA-Z0-9_-]+(?=/|$)"),
+//          "/{context_type}/{context_id}"
+//      ),
       new ReplacementRule(
-          Pattern.compile("(/projects/)proj-[a-zA-Z0-9]{3,}(?=/|$)"),
+          Pattern.compile("(/projects/|/folders/)(fold|proj|legacy)" +
+              "-[a-zA-Z0-9-]+(?=/|$)"),
           "/{context_type}/{context_id}"
       ),
-      
-      // /fold-abc123/ => /.../
       new ReplacementRule(
-          Pattern.compile("(/)fold-[a-zA-Z0-9]{3,}(?=/|$)"),
-          "/{context_type}/{context_id}"
+          Pattern.compile("(product-catalog/api/v2/)(graphs/|products/|\\{context_type\\}/\\{context_id\\}/products/|item_visual_templates/item_visual_template/cluster/)[a-zA-Z0-9_-]+(?=/|$)"),
+          "$1$2{contaier_name}"
       ),
       
+      new ReplacementRule(
+          Pattern.compile("(product-catalog/api/v2/)(services/|actions/)[a-zA-Z0-9_-]+(?=/|$)"),
+          "$1$2{contaier_action}"
+      ),
+//      // /fold-abc123/ => /.../
+//      new ReplacementRule(
+//          Pattern.compile("(/)fold-[a-zA-Z0-9]{3,}(?=/|$)"),
+//          "/{context_type}/{context_id}"
+//      ),
+//
       // /grp-1213/asdf => /.../asdf
       new ReplacementRule(
           Pattern.compile("(/)grp-[a-zA-Z0-9]{3,}(?=/|$)"),
@@ -37,11 +55,13 @@ public class PathNormalizerService {
           "/{context_type}/"
       ),
       new ReplacementRule(
-          Pattern.compile("(/items/)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=/|$)"),
+          Pattern.compile("(/items/)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}" +
+              "-[0-9a-f]{4}-[0-9a-f]{12}(?=/|$)"),
           "$1{item_id}"
       ),
       new ReplacementRule(
-          Pattern.compile("(/orders/)[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=/|$)"),
+          Pattern.compile("(/orders/)[0-9a-f]{8}-[0-9a-f]{4}-" +
+              "[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}(?=/|$)"),
           "$1{order_id}"
       ),
       
@@ -50,29 +70,29 @@ public class PathNormalizerService {
           Pattern.compile("(/personal/)[a-zA-Z]{3,}(?=/|$)"),
           "$1..."
       ),
-      
       // URL-encoded paths
       new ReplacementRule(
-          Pattern.compile("(/resource-manager)%2Fprojects%2Fproj-[a-zA-Z0-9]{3,}+(?=/|$)"),
-          "$1..."
+          Pattern.compile("(/resource-manager)%2F(projects|folders|" +
+              "organizations)%2F[a-zA-Z0-9_-]{3,}"),
+          "$1/$2/..."
       ),
       
-      // Сегменты с 4+ цифрами: /4j5n6jjho3k8 => /...
-      new ReplacementRule(
-          Pattern.compile("(/)([^/]*(\\d[^/]*){5,}[^/]*)(?=/|$)"),
-          "$1..."
-      ),
+//      // Сегменты с 4+ цифрами: /4j5n6jjho3k8 => /...
+//      new ReplacementRule(
+//          Pattern.compile("(/)([^/]*(\\d[^/]*){5,}[^/]*)(?=/|$)"),
+//          "$1..."
+//      ),
       
       // /vtb12345 => /...
       new ReplacementRule(
           Pattern.compile("(/)vtb\\d{4,}(?=/|$)"),
-          "$1..."
+          "$1{vtbUser}"
       ),
       
       // Числовые ID: /12345 => /...
       new ReplacementRule(
           Pattern.compile("(/)\\d+(?=/|$)"),
-          "$1..."
+          "$1{NumberId}"
       ),
 //
 //      // Версии: /v1 => / (убираем полностью)
@@ -101,9 +121,13 @@ public class PathNormalizerService {
           "$1..."
       ),
       new ReplacementRule(
-          Pattern.compile("(/products/)\\d+"),
+          Pattern.compile("(/products/)[a-zA-Z0-9-]+(?=/|$)"),
           "$1{product_id}"
-      )
+      ),
+        new ReplacementRule(
+      Pattern.compile("(/product-catalog/api/v1/graphs/)[a-zA-Z0-9-]+(?=/|$)"),
+          "$1{graphs_id}"
+              )
   );
   
   public  String normalizePathWithDots(String path) {
@@ -117,35 +141,6 @@ public class PathNormalizerService {
     }
     
     return normalized;
-  }
-  
-  private String normalizeSingleSegment(String segment) {
-    // Project IDs
-    if (segment.matches("proj-[a-zA-Z0-9]{3,}")) return "...";
-    
-    // Fold IDs
-    if (segment.matches("fold-[a-zA-Z0-9]{3,}")) return "...";
-    
-    // Group IDs
-    if (segment.matches("grp-[a-zA-Z0-9]{3,}")) return "...";
-    
-    // Service Account IDs
-    if (segment.matches("sa_proj-[a-zA-Z0-9]{3,}-[a-zA-Z0-9]+")) return "...";
-    
-    // VTB с цифрами
-    if (segment.matches("vtb\\d{4,}")) return "...";
-    
-    // Сегменты с 4+ цифрами
-    if (segment.chars().filter(Character::isDigit).count() >= 4) return "...";
-    
-    // Длинные числовые ID
-    if (segment.matches("\\d{3,}")) return "...";
-    
-    // Personal names
-    if (segment.matches("[a-zA-Z]{3,}") && !segment.equals("personal"))
-      return "...";
-    
-    return segment;
   }
   
   private static class ReplacementRule {
